@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blog.dao.RolesUserMapper">
+  <resultMap id="BaseResultMap" type="com.example.blog.model.RolesUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="rid" jdbcType="INTEGER" property="rid" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+  </resultMap>
+
+
+  <insert id="updateUserRoles" parameterType="java.util.List">
+    INSERT INTO roles_user (rid,uid) VALUES
+    <foreach collection="rids" separator="," item="rid">
+      (#{rid},#{id})
+    </foreach>
+  </insert>
+</mapper>

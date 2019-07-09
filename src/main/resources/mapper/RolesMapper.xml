@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blog.dao.RolesMapper">
+  <resultMap id="BaseResultMap" type="com.example.blog.model.Roles">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="roleKey" jdbcType="VARCHAR" property="roleKey" />
+    <result column="state" jdbcType="BIT" property="state" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    r.id,
+    r.name,
+    r.role_key,
+    r.state,
+    r.create_time,
+    r.update_time
+  </sql>
+  <select id="getRoleByUserId" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM roles r
+    LEFT JOIN roles_user ru ON  r.id = ru.rid
+    WHERE r.state = 0
+    <if test=" userId != null ">
+      AND  ru.uid = #{userId}
+    </if>
+  </select>
+</mapper>

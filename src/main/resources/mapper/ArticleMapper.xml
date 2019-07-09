@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blog.dao.ArticleMapper">
+  <resultMap id="BaseResultMap" type="com.example.blog.model.Article">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="publishDate" jdbcType="TIMESTAMP" property="publishdate" />
+    <result column="editTime" jdbcType="TIMESTAMP" property="edittime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="pageView" jdbcType="INTEGER" property="pageview" />
+    <result column="mdContent" jdbcType="LONGVARCHAR" property="mdcontent" />
+    <result column="htmlContent" jdbcType="LONGVARCHAR" property="htmlcontent" />
+    <result column="summary" jdbcType="LONGVARCHAR" property="summary" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    art.id,
+    art.title,
+    art.mdContent,
+    art.htmlContent,
+    art.summary,
+    art.cid,
+    art.uid,
+    art.publishDate,
+    art.editTime,
+    art.state,
+    art.pageView
+  </sql>
+
+  <select id="findArticleByKeyWords" resultMap="BaseResultMap">
+    SELECT art.id,art.title,art.editTime,art.state,art.pageView,art.uid,art.cid
+    FROM article art
+    WHERE 1=1
+    <if test=" state != -2">
+      AND art.uid = #{userId}
+    </if>
+    <if test=" state != -1 and state != -2">
+      AND art.state = #{state}
+    </if>
+    <if test=" state == -2">
+      AND art.state = 1
+    </if>
+    <if test=" keywords != null and keywords != '' ">
+      AND art.title LIKE concat('%',#{keywords},'%')
+    </if>
+    ORDER BY art.editTime DESC
+  </select>
+
+  <select id="getArticleTotal" resultType="Integer">
+    SELECT count(*) total
+    FROM article art
+    WHERE 1=1
+    <if test=" state != -2">
+      AND art.uid = #{userId}
+    </if>
+    <if test=" state != -1 and state != -2">
+      AND art.state = #{state}
+    </if>
+    <if test=" state == -2">
+      AND art.state = 1
+    </if>
+    <if test=" keywords != null and keywords != '' ">
+      AND art.title LIKE concat('%',#{keywords},'%')
+    </if>
+  </select>
+
+  <insert id="pvStatisticsPerDay">
+    INSERT INTO pv(countDate,pv,uid) SELECT CURRENT_DATE(),totalPv-pv,t.`uid` FROM pvview p,totalpvview t WHERE p.`uid`=t.`uid`
+  </insert>
+
+    <select id="getCategories" resultType="String" >
+        SELECT countDate from pv WHERE uid=#{id} ORDER by countDate limit 7
+    </select>
+    <select id="getDataStatistics" resultType="int">
+        SELECT pv from pv WHERE uid=#{id} ORDER by countDate limit 7
+    </select>
+
+</mapper>

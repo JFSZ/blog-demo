@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blog.dao.CategoryMapper">
+  <resultMap id="BaseResultMap" type="com.example.blog.model.Category">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="cateName" jdbcType="VARCHAR" property="catename" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="date" jdbcType="DATE" property="date" />
+  </resultMap>
+</mapper>

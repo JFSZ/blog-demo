@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blog.dao.TUserMapper">
+  <resultMap id="BaseResultMap" type="com.example.blog.model.TUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="enabled" jdbcType="BIT" property="enabled" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="userface" jdbcType="VARCHAR" property="userface" />
+    <result column="regTime" jdbcType="TIMESTAMP" property="regtime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    tu.id,
+    tu.username,
+    tu.nickname,
+    tu.password,
+    tu.enabled,
+    tu.state,
+    tu.email,
+    tu.userface,
+    tu.regTime
+  </sql>
+
+  <select id="getUserByUsername" parameterType="String" resultType="com.example.blog.model.TUser">
+    SELECT <include refid="Base_Column_List"/>
+    FROM t_user tu
+    WHERE tu.username = #{username}
+    AND tu.state = 0 AND tu.enabled = 1
+  </select>
+
+  <select id="isAdmin" resultType="com.example.blog.model.Roles">
+    SELECT
+    r.*
+    FROM
+      roles r
+    LEFT JOIN
+      roles_user ru ON r.id = ru.rid
+    LEFT JOIN
+      t_user tu ON ru.uid = tu.id
+    WHERE
+	  tu.username = #{username}
+	  AND tu.state = 0
+  </select>
+
+  <select id="getAllUserInfo" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM t_user tu
+    WHERE tu.state = 0
+    <if test="keywords != null and keywords != '' ">
+      AND tu.nickname LIKE concat('%',#{keywords},'%')
+    </if>
+  </select>
+
+</mapper>
