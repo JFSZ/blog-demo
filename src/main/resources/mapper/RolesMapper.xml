@@ -7,10 +7,10 @@
     -->
     <result column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="roleKey" jdbcType="VARCHAR" property="roleKey" />
+    <result column="role_key" jdbcType="VARCHAR" property="roleKey" />
     <result column="state" jdbcType="BIT" property="state" />
-    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
 
   <sql id="Base_Column_List">

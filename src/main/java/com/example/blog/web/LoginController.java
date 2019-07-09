@@ -1,6 +1,9 @@
 package com.example.blog.web;
 
 import com.example.blog.core.ServerResponse;
+import com.example.blog.model.Roles;
+import com.example.blog.model.TUser;
+import com.example.blog.service.RolesService;
 import com.example.blog.service.TUserService;
 import com.example.blog.util.StringTools;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -27,11 +33,13 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 public class LoginController {
     @Resource
-    TUserService tUserService;
+    private TUserService tUserService;
+    @Resource
+    private RolesService rolesService;
 
     @ApiOperation(value = "登录",notes = "登录")
     @PostMapping("/login")
-    public ServerResponse login(@RequestParam String username, @RequestParam String password) {
+    public ServerResponse login(@RequestParam String username, @RequestParam String password,HttpServletRequest request) {
         if(StringTools.isEmpty(username)){
             return ServerResponse.createByErrorCodeMessage(1,"用户名为空");
         }
@@ -42,8 +50,20 @@ public class LoginController {
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username,password);
         try {
+            if(request.getAttribute("rememberMe") != null){
+                token.setRememberMe(true);
+            }
+            TUser tUser = tUserService.getUserByUsername(username);
+            if(tUser == null){
+                return ServerResponse.createByErrorCodeMessage(1,"获取用户信息失败!");
+            }
+            List<Roles> rolesList = rolesService.getRoleByUserId(tUser.getId());
+            List<String> roleList = new ArrayList<>();
+            for (Roles roles : rolesList){
+                roleList.add(roles.getRoleKey());
+            }
             subject.login(token);
-            subject.hasRole(username);
+            subject.hasRoles(roleList);
             return ServerResponse.createBySuccess("登录成功!");
         }catch (UnknownAccountException e){
             log.info("用户名或密码错误");

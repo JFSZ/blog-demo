@@ -1,8 +1,9 @@
 package com.example.blog;
 
-import com.example.blog.model.Article;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.springframework.util.DigestUtils;
+import org.apache.shiro.codec.Base64;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 /**
  * @ClassName Test

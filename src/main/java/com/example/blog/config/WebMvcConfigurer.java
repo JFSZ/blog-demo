@@ -1,3 +1,4 @@
+/*
 package com.example.blog.config;
 
 import org.springframework.context.annotation.Bean;
@@ -10,12 +11,14 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+*/
 /**
  * @ClassName WebMvcConfigurer
  * @Author chenxue
  * @Description
  * @Date 2019/6/24 15:25
- **/
+ **//*
+
 @Configuration
 public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
     //解决跨域问题
@@ -55,3 +58,4 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
     }
 
 }
+*/

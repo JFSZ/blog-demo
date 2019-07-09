@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +50,9 @@ public class ArticleController {
     private ArticleTagsService articleTagsService;
     @Resource
     private TagsService tagsService;
+
+    @Value("${file.uploadPath}")
+    private String upLoadPath;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
@@ -206,8 +211,8 @@ public class ArticleController {
     public ServerResponse uploadImg(HttpServletRequest request, MultipartFile file){
         StringBuffer url = new StringBuffer();
         String filePath = "/blogimg/" + sdf.format(new Date());
-        String imgFolderPath = request.getServletContext().getRealPath(filePath);
-        File file1 = new File(imgFolderPath);
+        //String imgFolderPath = request.getServletContext().getRealPath(filePath);
+        File file1 = new File(upLoadPath,filePath);
         if(!file1.exists()){
             file1.mkdirs();
         }

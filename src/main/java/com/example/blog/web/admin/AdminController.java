@@ -39,15 +39,6 @@ public class AdminController {
     private TUserService tUserService;
     @Resource
     private RolesService rolesService;
-    @ApiOperation(value = "获取所有分类",notes = "获取所有分类")
-    @PostMapping("/getAllCategory")
-    public ServerResponse getAllCategory(){
-        Condition condition = new Condition(Category.class);
-        condition.createCriteria()
-                .andEqualTo("state",0);
-        List<Category> category = categoryService.findByCondition(condition);
-        return ServerResponse.createBySuccess(category);
-    }
 
     @ApiOperation(value = "根据关键字,获取所有用户信息",notes = "根据关键字,获取所有用户信息")
     @PostMapping("/getAllUserInfo")

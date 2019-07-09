@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -62,5 +63,14 @@ public class CategoryController {
         List<Category> list = categoryService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+    @ApiOperation(value = "获取所有分类",notes = "获取所有分类")
+    @PostMapping("/getAllCategory")
+    public ServerResponse getAllCategory(){
+        Condition condition = new Condition(Category.class);
+        condition.createCriteria()
+                .andEqualTo("state",0);
+        List<Category> category = categoryService.findByCondition(condition);
+        return ServerResponse.createBySuccess(category);
     }
 }

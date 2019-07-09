@@ -21,6 +21,7 @@
   <sql id="Base_Column_List">
     m.id,
     m.url,
+    m.code,
     m.name,
     m.icon,
     m.parent_id,
