@@ -6,6 +6,7 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
@@ -13,14 +14,14 @@ import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisManager;
+import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.util.HashMap;
@@ -35,12 +36,14 @@ import java.util.Map;
  **/
 @Configuration
 public class ShiroConfig {
-    @Value("${redis.host}")
+    @Value("${spring.redis.host}")
     private String host;
-    @Value("${redis.port}")
+    @Value("${spring.redis.port}")
     private int port;
-    @Value("${redis.password}")
+    @Value("${spring.redis.password}")
     private String password;
+    @Value("${spring.redis.jedis.poll}")
+    private JedisPool jedisPool;
     @Bean
     public Realm realm(){
         return new MyRealm();
@@ -76,18 +79,42 @@ public class ShiroConfig {
     public DefaultWebSecurityManager securityManager(){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(realm());
+        securityManager.setSessionManager(sessionManager());
+        securityManager.setCacheManager(redisCacheManager());
         securityManager.setRememberMeManager(rememberMeManager());
         return securityManager;
     }
 
     @Bean
+    public SessionManager sessionManager(){
+        MySessionManager mySessionManager = new MySessionManager();
+        mySessionManager.setSessionDAO(redisSessionDAO());
+        return mySessionManager;
+    }
+
+    @Bean
+    public RedisSessionDAO redisSessionDAO(){
+        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        redisSessionDAO.setExpire(1800);
+        return redisSessionDAO;
+    }
+
+    @Bean
     public RedisManager redisManager(){
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost(host);
-        redisManager.setPort(port);
-        redisManager.setPassword(password);
+        redisManager.setPassword("");
         redisManager.setTimeout(21600);
+        redisManager.setJedisPool(new JedisPool("127.0.0.1",6379));
         return redisManager;
+    }
+
+    @Bean
+    public RedisCacheManager redisCacheManager(){
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        redisCacheManager.setKeyPrefix("blog-demo:cache:");
+        return redisCacheManager;
     }
     @Bean
     public CacheManager cacheManager(){

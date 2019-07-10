@@ -1,6 +1,7 @@
 package com.example.blog.config.shiro;
 
 import com.example.blog.util.StringTools;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
@@ -15,6 +16,7 @@ import java.util.Set;
  * @Description
  * @Date 2019/7/9 19:17
  **/
+@Slf4j
 public class ShiroRedisCacheManager implements CacheManager {
     private RedisCacheManager cacheManager;
 
@@ -34,6 +36,7 @@ public class ShiroRedisCacheManager implements CacheManager {
         return new ShiroRedisCache<K,V>(name,cacheManager);
     }
 }
+@Slf4j
 class ShiroRedisCache<K,V> implements Cache<K,V> {
     private RedisCacheManager cacheManager;
     private org.springframework.cache.Cache cache;
@@ -46,17 +49,27 @@ class ShiroRedisCache<K,V> implements Cache<K,V> {
     }
 
     @Override
-    public V get(K k) throws CacheException {
-        return null;
+    public V get(K key) throws CacheException {
+        log.info("从缓存中虎丘key为{}的缓存信息",key);
+        if(key == null){
+            return null;
+        }
+        org.springframework.cache.Cache.ValueWrapper valueWrapper = cache.get(key);
+        if (valueWrapper == null) {
+            return null;
+        }
+        return (V) valueWrapper.get();
     }
 
     @Override
-    public V put(K k, V v) throws CacheException {
-        return null;
+    public V put(K key, V value) throws CacheException {
+        log.info("创建新的缓存，信息为：{}={}", key, value);
+        cache.put(key, value);
+        return get(key);
     }
 
     @Override
-    public V remove(K k) throws CacheException {
+    public V remove(K key) throws CacheException {
         return null;
     }
 

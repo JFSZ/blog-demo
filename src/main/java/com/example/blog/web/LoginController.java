@@ -84,6 +84,7 @@ public class LoginController {
     @PostMapping("/logout")
     public ServerResponse logout(){
        Subject subject = SecurityUtils.getSubject();
+       //清除 session
        subject.logout();
         return ServerResponse.createBySuccess();
     }
