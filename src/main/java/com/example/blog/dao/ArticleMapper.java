@@ -15,4 +15,6 @@ public interface ArticleMapper extends Mapper<Article> {
     List<String> getCategories(@Param("id") Integer uid);
 
     List<Integer> getDataStatistics(@Param("id")Integer uid);
+
+    List<Article> getAllArticle();
 }

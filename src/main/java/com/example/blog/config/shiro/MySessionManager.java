@@ -1,14 +1,19 @@
 package com.example.blog.config.shiro;
 
 
+import com.example.blog.util.CookieUtil;
+import com.example.blog.util.RedisUtil;
+import com.example.blog.util.StringTools;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 /**
@@ -23,6 +28,10 @@ public class MySessionManager extends DefaultWebSessionManager {
     private static final String AUTHORIZATION = "Authorization";
 
     private static final String REFERENCED_SESSION_ID_SOURCE = "Stateless request";
+    @Autowired
+    private CookieUtil cookieUtil;
+    @Autowired
+    private RedisUtil redisUtil;
 
     public MySessionManager() {
         super();
@@ -37,11 +46,18 @@ public class MySessionManager extends DefaultWebSessionManager {
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, REFERENCED_SESSION_ID_SOURCE);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
-            return id;
+            String sessionId = StringTools.stringof(redisUtil.get(id));
+            return sessionId;
         } else {
-            log.info("默认方式获取sessionId");
-            // 否则按默认规则从cookie取sessionId
-            return super.getSessionId(request, response);
+            String cookieToken = cookieUtil.getCookie((HttpServletRequest) request,"online-login");
+            if(!StringTools.isEmpty(cookieToken)){
+                String sessionId = StringTools.stringof(redisUtil.get(cookieToken));
+                return sessionId;
+            }else {
+                log.info("默认方式获取sessionId");
+                // 否则按默认规则从cookie取sessionId
+                return super.getSessionId(request, response);
+            }
         }
     }
 

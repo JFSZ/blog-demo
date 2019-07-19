@@ -23,6 +23,10 @@ public class RedisUtil {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    public static RedisUtil getInstance(){
+        return new RedisUtil();
+    }
+
     /*
     * @Author chenxue
      * @Description 指定缓存失效时间

@@ -23,10 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 /**
@@ -83,7 +80,10 @@ public class LoginController {
             cookieUtil.setCookie(response,tokenKey,"online-login");
             redisUtil.set(tokenKey,subject.getSession().getId().toString());
             redisUtil.expire(tokenKey,30 * 60);
-            return ServerResponse.createBySuccess("登录成功!");
+            Map<String,Object> map = new HashMap<>();
+            map.put("token",tokenKey);
+            map.put("userInfo",tUser);
+            return ServerResponse.createBySuccess("登录成功!",map);
         }catch (UnknownAccountException e){
             log.info("用户名或密码错误");
             return ServerResponse.createByErrorCodeMessage(1,"登录失败：密码错误!");
@@ -101,10 +101,14 @@ public class LoginController {
 
     @ApiOperation(value = "退出",notes = "退出")
     @PostMapping("/logout")
-    public ServerResponse logout(){
+    public ServerResponse logout(HttpServletRequest request,HttpServletResponse response){
        Subject subject = SecurityUtils.getSubject();
        //清除 session
        subject.logout();
+       //清除redis、cookies
+        String onlineCookie = cookieUtil.getCookie(request,"online-login");
+        cookieUtil.deleteCookie(request,response,"online-login");
+        redisUtil.del(onlineCookie);
         return ServerResponse.createBySuccess();
     }
 

@@ -1,5 +1,6 @@
 package com.example.blog;
 
+import com.sun.deploy.config.WebStartConfig;
 import org.apache.shiro.codec.Base64;
 
 import javax.crypto.KeyGenerator;

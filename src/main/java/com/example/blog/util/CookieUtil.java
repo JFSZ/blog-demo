@@ -29,6 +29,9 @@ public class CookieUtil {
      * @param token
      * @return boolean
      **/
+    public static CookieUtil getInstance(){
+        return new CookieUtil();
+    }
 
     public boolean setCookie(HttpServletResponse response,String token){
         log.info("设置cookie");
@@ -138,7 +141,7 @@ public class CookieUtil {
                 }
             }
         }
-        return null;
+        return "";
     }
 
     /*

@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import redis.clients.jedis.JedisPool;
 
+import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -61,7 +62,9 @@ public class ShiroConfig {
         //拦截器 系统默认拦截器
         Map<String,String> filterChainDefinitionMap = new LinkedHashMap<>();
         //添加自己的过滤器
-        Map<String,String> filterMap = new HashMap<>(16);
+        Map<String,Filter> filterMap = new HashMap<>(16);
+        //自定义过滤器
+        filterMap.put("authc",new CheckTokenFilter());
         //登录 退出 默认不拦截
         filterChainDefinitionMap.put("/login","anon");
         filterChainDefinitionMap.put("/logout","anon");
@@ -71,6 +74,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/admin/**","authc,roles[admin]");
         //其他所有请求都需要验证
         filterChainDefinitionMap.put("/**","authc");
+        shiroFilterFactoryBean.setFilters(filterMap);
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }

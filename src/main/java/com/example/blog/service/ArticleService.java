@@ -23,4 +23,6 @@ public interface ArticleService extends Service<Article> {
     List<String> getCategories(Integer id);
 
     List<Integer> getDataStatistics(Integer id);
+
+    List<Article> getAllArticle();
 }

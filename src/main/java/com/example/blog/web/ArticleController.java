@@ -248,4 +248,9 @@ public class ArticleController {
         chartsVo.setDs(dataStatistics);
         return ServerResponse.createBySuccess(chartsVo);
     }
+    @PostMapping("/getAllArticle")
+    public ServerResponse getAllArticle(){
+        List<Article> list = articleService.getAllArticle();
+        return null;
+    }
 }

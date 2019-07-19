@@ -127,4 +127,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     public List<Integer> getDataStatistics(Integer id) {
         return articleMapper.getDataStatistics(id);
     }
+
+    @Override
+    public List<Article> getAllArticle() {
+        return articleMapper.getAllArticle();
+    }
 }

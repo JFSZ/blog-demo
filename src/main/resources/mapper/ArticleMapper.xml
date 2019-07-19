@@ -80,4 +80,11 @@
         SELECT pv from pv WHERE uid=#{id} ORDER by countDate limit 7
     </select>
 
+    <select id="getAllArticle" resultType="com.example.blog.vo.ArticleVo">
+      SELECT art.title,art.htmlContent,art.publishDate,t.nickname
+      FROM article art LEFT JOIN t_user t
+      ON art.uid = t.id
+      WHERE art.state = 1 AND t.state = 0
+    </select>
+
 </mapper>
